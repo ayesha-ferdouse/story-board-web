@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { client, urlFor } from '../lib/sanity';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, ArrowRight, Check, X } from 'lucide-react';
 
 const Home = () => {
   const [data, setData] = useState<any>(null);
@@ -12,70 +12,91 @@ const Home = () => {
     client.fetch('*[_type == "storyBoard"][0]').then((res) => setData(res));
   }, []);
 
-  const identities = ["NGO Owner", "Author", "Small Business Owner", "Personal Brand"];
+  const identities = data?.identities || ["NGO Owner", "Author", "Strategist", "34-year-old Creative"];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRotatorIndex((prev) => (prev + 1) % identities.length);
-    }, 2500);
+    }, 2800);
     return () => clearInterval(interval);
-  }, []);
+  }, [identities]);
+
+  const filteredServices = data?.services?.filter((s: any) => s.category === activeTab) || [];
 
   return (
-    <div className="bg-brand-bg text-brand-text min-h-screen font-sans">
+    <div className="bg-[#F9FAEB] text-[#1C242D] min-h-screen font-sans selection:bg-[#D1E231]">
       
       {/* FLOATING ACTION BUTTON */}
-      <button className="fixed bottom-8 right-8 z-50 bg-brand-secondary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center gap-2 font-bold">
+      <a 
+        href="mailto:hello@ayeshaferdouse.com" 
+        className="fixed bottom-8 right-8 z-50 bg-[#EC3031] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-transform flex items-center gap-2 font-bold border-2 border-[#1C242D]"
+      >
         <MessageCircle size={24} />
-        <span>Contact Me</span>
-      </button>
+        <span className="hidden md:inline">Contact Me</span>
+      </a>
 
       {/* HERO SECTION */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden border-b-4 border-brand-text">
+      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden border-b-4 border-[#1C242D]">
         {data?.heroImage && (
           <img 
             src={urlFor(data.heroImage).url()} 
-            className="absolute inset-0 w-full h-full object-cover grayscale opacity-40"
-            alt="Hero background"
+            className="absolute inset-0 w-full h-full object-cover grayscale opacity-30"
+            alt="Hero Background"
           />
         )}
         
         <motion.div 
-          initial={{ y: 50, opacity: 0 }}
+          initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="relative z-10 backdrop-blur-md bg-white/30 border-4 border-brand-text p-12 max-w-4xl mx-6 rounded-[2rem] shadow-2xl text-center"
+          className="relative z-10 glass p-8 md:p-16 max-w-5xl mx-6 rounded-[2.5rem] shadow-2xl text-center border-4 border-[#1C242D]"
         >
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none mb-8">
-            THE NARRATIVE ANCHOR
+          <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.85] mb-8">
+            {data?.mainHeading || "THE NARRATIVE ANCHOR"}
           </h1>
-          <button className="bg-brand-primary border-2 border-brand-text px-10 py-4 rounded-full text-xl font-bold hover:shadow-[8px_8px_0px_0px_rgba(28,36,45,1)] transition-all">
-            View My Work
+          <button className="bg-[#D1E231] border-2 border-[#1C242D] px-12 py-5 rounded-full text-xl font-bold hover:shadow-[8px_8px_0px_0px_rgba(28,36,45,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all">
+            Explore Strategy
           </button>
         </motion.div>
       </section>
 
-      {/* THE "HEY" SECTION */}
-      <section className="py-24 px-6 md:px-24 grid md:grid-cols-2 gap-16 items-center">
-        <h2 className="text-7xl md:text-9xl font-bold leading-tight">
-          Hey, <br />
-          <span className="font-accent text-brand-secondary">
-            {identities[rotatorIndex]}
-          </span>!
-        </h2>
-        <div className="text-2xl md:text-3xl font-medium leading-relaxed opacity-90">
-          {data?.description || "You have a complex story. I help you anchor it into a narrative that moves people and markets."}
+      {/* NARRATIVE "HEY" SECTION */}
+      <section className="py-32 px-6 md:px-24 grid md:grid-cols-2 gap-16 items-start">
+        <div className="sticky top-24">
+          <h2 className="text-7xl md:text-9xl font-bold leading-[0.8] tracking-tighter">
+            Hey, <br />
+            <AnimatePresence mode="wait">
+              <motion.span 
+                key={rotatorIndex}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                className="font-accent text-[#EC3031] inline-block -rotate-2"
+              >
+                {identities[rotatorIndex]}
+              </motion.span>
+            </AnimatePresence>!
+          </h2>
+        </div>
+        <div className="flex flex-col gap-8">
+          <p className="text-3xl md:text-4xl font-medium leading-tight opacity-90">
+            {data?.philosophy || "You have a complex story. I help you anchor it into a narrative that moves people and markets."}
+          </p>
+          <div className="w-24 h-2 bg-[#D1E231]"></div>
         </div>
       </section>
 
-      {/* BENTO SERVICES WITH SWITCHER */}
-      <section className="py-24 px-6 md:px-24 bg-white/50 border-y-4 border-brand-text">
-        <div className="flex justify-center mb-16">
-          <div className="bg-brand-text p-2 rounded-full flex gap-2">
+      {/* BENTO SERVICES */}
+      <section className="py-32 px-6 md:px-24 bg-white/40 border-y-4 border-[#1C242D]">
+        <div className="flex flex-col items-center mb-20">
+          <h3 className="text-5xl font-bold mb-10 tracking-tight italic uppercase">Expertise</h3>
+          <div className="bg-[#1C242D] p-2 rounded-full flex flex-wrap justify-center gap-2">
             {['Organization', 'Business', 'Individual'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-full font-bold transition-all ${activeTab === tab ? 'bg-brand-primary text-brand-text' : 'text-white hover:opacity-70'}`}
+                className={`px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest transition-all ${
+                  activeTab === tab ? 'bg-[#D1E231] text-[#1C242D]' : 'text-white hover:bg-white/10'
+                }`}
               >
                 {tab}
               </button>
@@ -84,18 +105,52 @@ const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Bento Card Example */}
-          <div className="md:col-span-2 bg-brand-primary border-4 border-brand-text p-10 rounded-[3rem] shadow-[12px_12px_0px_0px_rgba(28,36,45,1)]">
-            <h3 className="text-4xl font-bold mb-4 italic underline">Narrative Audit</h3>
-            <p className="text-xl">A deep dive into your current messaging for your {activeTab}.</p>
-          </div>
-          <div className="bg-brand-secondary text-white border-4 border-brand-text p-10 rounded-[3rem] flex flex-col justify-end">
-            <div className="text-6xl font-bold">01</div>
-            <p className="uppercase tracking-widest font-bold">Strategy Session</p>
-          </div>
+          {filteredServices.length > 0 ? filteredServices.map((service: any, idx: number) => (
+            <motion.div 
+              layout
+              key={service.title}
+              className={`p-10 rounded-[3rem] border-4 border-[#1C242D] flex flex-col justify-between min-h-[380px] shadow-[10px_10px_0px_0px_rgba(28,36,45,1)] ${
+                idx === 0 ? 'md:col-span-2 bg-[#D1E231]' : 'bg-white'
+              }`}
+            >
+              <h4 className="text-4xl font-bold italic underline decoration-4 underline-offset-8 mb-6">{service.title}</h4>
+              <p className="text-xl font-medium mb-8 leading-snug">{service.description}</p>
+              <ArrowRight className="mt-auto group-hover:translate-x-2 transition-transform" size={40} />
+            </motion.div>
+          )) : (
+            <p className="col-span-3 text-center opacity-40 italic">Add services in Sanity to populate this grid.</p>
+          )}
         </div>
       </section>
 
+      {/* COMPARISON SECTION */}
+      <section id="comparison" className="py-32 px-6 md:px-24 grid md:grid-cols-2 gap-8 bg-[#1C242D] text-white overflow-hidden">
+        <div className="bg-[#D1E231] text-[#1C242D] border-4 border-white p-12 rounded-[2.5rem] hover:-rotate-1 transition-transform relative group">
+          <div className="flex items-center gap-4 mb-6">
+            <Check size={40} className="text-[#EC3031]" />
+            <h3 className="text-5xl font-bold italic">The Specialist</h3>
+          </div>
+          <p className="text-2xl font-medium leading-relaxed">
+            {data?.comparison?.specialistText || "9 years of global context, zero layers of middle management. Direct access to the strategist who actually builds your story."}
+          </p>
+          <div className="mt-8 h-2 w-0 group-hover:w-full bg-[#EC3031] transition-all duration-500"></div>
+        </div>
+
+        <div className="bg-white/10 border-4 border-white/20 p-12 rounded-[2.5rem] hover:rotate-1 transition-transform">
+          <div className="flex items-center gap-4 mb-6">
+            <X size={40} className="opacity-30" />
+            <h3 className="text-5xl font-bold opacity-30">Large Agency</h3>
+          </div>
+          <p className="text-2xl opacity-40 leading-relaxed font-light">
+            {data?.comparison?.agencyText || "Junior staff, templated solutions, and high overhead. Your unique vision gets diluted in the corporate machine."}
+          </p>
+        </div>
+      </section>
+
+      <footer className="py-16 text-center">
+        <div className="text-2xl font-bold uppercase tracking-widest mb-4">Story Board</div>
+        <p className="opacity-40 text-xs font-bold uppercase tracking-[0.2em]">© 2026 Cape Town & Global | Narrative Architecture</p>
+      </footer>
     </div>
   );
 };
