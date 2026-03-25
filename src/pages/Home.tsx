@@ -1,80 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { client } from '../lib/sanity';
+import { client, urlFor } from '../lib/sanity';
+import { MessageCircle } from 'lucide-react';
 
 const Home = () => {
   const [data, setData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('Organization');
   const [rotatorIndex, setRotatorIndex] = useState(0);
 
   useEffect(() => {
-    // Note: We use the 'storyBoard' type we agreed on!
     client.fetch('*[_type == "storyBoard"][0]').then((res) => setData(res));
   }, []);
 
-  const identities = data?.identities || ["Founder", "Strategist", "Narrative Architect"];
+  const identities = ["NGO Owner", "Author", "Small Business Owner", "Personal Brand"];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRotatorIndex((prev) => (prev + 1) % identities.length);
     }, 2500);
     return () => clearInterval(interval);
-  }, [identities]);
+  }, []);
 
   return (
-    <div className="bg-[#F8F7F2] text-[#1A1A1A] min-h-screen font-sans px-6 py-12 lg:px-24">
-      {/* HEADER */}
-      <nav className="flex justify-between items-center mb-24">
-        <span className="text-2xl font-black tracking-tighter uppercase">Story Board</span>
-        <button className="bg-black text-white px-6 py-2 rounded-full font-medium hover:scale-105 transition-transform">
-          Start a Project
-        </button>
-      </nav>
+    <div className="bg-brand-bg text-brand-text min-h-screen font-sans">
+      
+      {/* FLOATING ACTION BUTTON */}
+      <button className="fixed bottom-8 right-8 z-50 bg-brand-secondary text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center gap-2 font-bold">
+        <MessageCircle size={24} />
+        <span>Contact Me</span>
+      </button>
 
       {/* HERO SECTION */}
-      <section className="max-w-6xl">
-        <h1 className="text-[12vw] lg:text-[10rem] font-bold leading-[0.85] tracking-tighter mb-12">
-          {data?.title || "STORY BOARD"}
-        </h1>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <div className="text-4xl lg:text-6xl font-light leading-tight">
-            Hey, I'm your <br />
-            <span className="italic font-serif text-orange-600 underline">
-              {identities[rotatorIndex]}
-            </span>
-          </div>
-          <div className="text-xl lg:text-2xl opacity-80 max-w-lg">
-            {data?.description || "I help visionaries anchor their complex ideas into narratives that move people."}
-          </div>
-        </div>
-      </section>
-
-      {/* BENTO GRID (The Qatchup Look) */}
-      <section className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-4 h-auto md:h-[600px]">
-        {/* Large Bento Card */}
-        <div className="md:col-span-2 bg-white rounded-[2.5rem] p-12 border border-black/5 flex flex-col justify-between shadow-sm">
-           <h3 className="text-4xl font-bold">The Narrative <br/> Strategy</h3>
-           <p className="text-lg opacity-60">Deep dive into your brand's DNA.</p>
-        </div>
+      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden border-b-4 border-brand-text">
+        {data?.heroImage && (
+          <img 
+            src={urlFor(data.heroImage).url()} 
+            className="absolute inset-0 w-full h-full object-cover grayscale opacity-40"
+            alt="Hero background"
+          />
+        )}
         
-        {/* Small Accent Card */}
-        <div className="bg-orange-500 rounded-[2.5rem] p-12 text-white flex flex-col justify-end">
-           <div className="text-6xl font-bold">11</div>
-           <p className="font-medium uppercase tracking-widest text-sm">Countries Served</p>
-        </div>
+        <motion.div 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="relative z-10 backdrop-blur-md bg-white/30 border-4 border-brand-text p-12 max-w-4xl mx-6 rounded-[2rem] shadow-2xl text-center"
+        >
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none mb-8">
+            THE NARRATIVE ANCHOR
+          </h1>
+          <button className="bg-brand-primary border-2 border-brand-text px-10 py-4 rounded-full text-xl font-bold hover:shadow-[8px_8px_0px_0px_rgba(28,36,45,1)] transition-all">
+            View My Work
+          </button>
+        </motion.div>
+      </section>
 
-        {/* Small Card */}
-        <div className="bg-[#1A1A1A] rounded-[2.5rem] p-12 text-white">
-           <h3 className="text-2xl font-bold mb-4">Workshops</h3>
-           <p className="opacity-50">Team-alignment through storytelling.</p>
-        </div>
-
-        {/* Medium Card */}
-        <div className="md:col-span-2 bg-yellow-200 rounded-[2.5rem] p-12 border border-black/5">
-           <h3 className="text-4xl font-bold mb-4 italic">Story Audit</h3>
-           <p className="text-xl text-black/70">Identifying the gaps in your current brand voice.</p>
+      {/* THE "HEY" SECTION */}
+      <section className="py-24 px-6 md:px-24 grid md:grid-cols-2 gap-16 items-center">
+        <h2 className="text-7xl md:text-9xl font-bold leading-tight">
+          Hey, <br />
+          <span className="font-accent text-brand-secondary">
+            {identities[rotatorIndex]}
+          </span>!
+        </h2>
+        <div className="text-2xl md:text-3xl font-medium leading-relaxed opacity-90">
+          {data?.description || "You have a complex story. I help you anchor it into a narrative that moves people and markets."}
         </div>
       </section>
+
+      {/* BENTO SERVICES WITH SWITCHER */}
+      <section className="py-24 px-6 md:px-24 bg-white/50 border-y-4 border-brand-text">
+        <div className="flex justify-center mb-16">
+          <div className="bg-brand-text p-2 rounded-full flex gap-2">
+            {['Organization', 'Business', 'Individual'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 rounded-full font-bold transition-all ${activeTab === tab ? 'bg-brand-primary text-brand-text' : 'text-white hover:opacity-70'}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Bento Card Example */}
+          <div className="md:col-span-2 bg-brand-primary border-4 border-brand-text p-10 rounded-[3rem] shadow-[12px_12px_0px_0px_rgba(28,36,45,1)]">
+            <h3 className="text-4xl font-bold mb-4 italic underline">Narrative Audit</h3>
+            <p className="text-xl">A deep dive into your current messaging for your {activeTab}.</p>
+          </div>
+          <div className="bg-brand-secondary text-white border-4 border-brand-text p-10 rounded-[3rem] flex flex-col justify-end">
+            <div className="text-6xl font-bold">01</div>
+            <p className="uppercase tracking-widest font-bold">Strategy Session</p>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };
