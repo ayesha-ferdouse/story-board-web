@@ -2,16 +2,14 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
+import About from './pages/About';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Your public Story Board landing page */}
         <Route path="/" element={<Home />} />
-        
-        {/* Your private Story Board editor */}
-        {/* The /* is CRITICAL—it lets Sanity handle its own internal pages */}
+        <Route path="/about" element={<About />} />
         <Route path="/admin/*" element={<Admin />} />
       </Routes>
     </BrowserRouter>
