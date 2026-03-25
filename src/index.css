@@ -2,8 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Custom Glassmorphism Utility */
+  .glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar to match the high-contrast aesthetic */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F9FAEB;
+}
+::-webkit-scrollbar-thumb {
+  background: #1C242D;
+  border-radius: 5px;
 }
