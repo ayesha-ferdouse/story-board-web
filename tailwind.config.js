@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -19,10 +16,6 @@ export default {
         sans: ['"Space Grotesk"', 'sans-serif'],
         accent: ['"Caveat"', 'cursive'],
       },
-      boxShadow: {
-        'neo': '8px 8px 0px 0px rgba(28, 36, 45, 1)',
-        'neo-hover': '12px 12px 0px 0px rgba(28, 36, 45, 1)',
-      }
     },
   },
   plugins: [],
