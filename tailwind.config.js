@@ -16,6 +16,9 @@ export default {
         sans: ['"Space Grotesk"', 'sans-serif'],
         accent: ['"Caveat"', 'cursive'],
       },
+      borderWidth: {
+        '6': '6px',
+      }
     },
   },
   plugins: [],
