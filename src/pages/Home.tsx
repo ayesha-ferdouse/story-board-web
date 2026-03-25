@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { client, urlFor } from '../lib/sanity';
 import { MessageCircle, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,18 +10,19 @@ const Home = () => {
   const [rotatorIndex, setRotatorIndex] = useState(0);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
+  const { scrollYProgress } = useScroll();
+  const iconX = useTransform(scrollYProgress, [0, 1], [0, 500]);
+
   useEffect(() => {
     client.fetch('*[_type == "storyBoard"][0]').then((res) => setData(res));
   }, []);
 
-  const identities = data?.identities || ["NGO Owner", "Author", "Small Business Owner", "Personal Brand"];
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotatorIndex((prev) => (prev + 1) % identities.length);
+      setRotatorIndex((prev) => (prev + (data?.identities?.length ? 1 : 0)) % (data?.identities?.length || 1));
     }, 2500);
     return () => clearInterval(interval);
-  }, [identities]);
+  }, [data]);
 
   const filteredServices = data?.services?.filter((s: any) => s.category === activeTab) || [];
 
@@ -29,74 +30,69 @@ const Home = () => {
     <div className="bg-brand-bg text-brand-dark min-h-screen font-sans selection:bg-brand-primary selection:text-white">
       
       {/* FAB */}
-      <a href="mailto:hello@ayeshaferdouse.com" className="fixed bottom-8 right-8 z-50 bg-brand-primary text-white p-5 rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center gap-2 border-2 border-brand-dark">
+      <a href="mailto:hello@ayeshaferdouse.com" className="fixed bottom-8 right-8 z-50 bg-brand-primary text-white p-5 rounded-full shadow-[6px_6px_0px_0px_rgba(28,36,45,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0px_0px_rgba(28,36,45,1)] transition-all border-2 border-brand-dark">
         <MessageCircle size={24} />
-        <span className="font-bold">Contact Me</span>
       </a>
 
-      {/* HERO SECTION - QATCHUP GLASS CARD */}
-      <section className="relative h-[90vh] flex items-center justify-center p-6">
+      {/* HERO: QATCHUP EDITORIAL GLASS */}
+      <section className="relative h-screen flex items-center justify-center p-4">
         {data?.heroImage && (
-          <img src={urlFor(data.heroImage).url()} className="absolute inset-0 w-full h-full object-cover grayscale opacity-10" alt="Hero" />
+          <img src={urlFor(data.heroImage).url()} className="absolute inset-0 w-full h-full object-cover grayscale opacity-15" alt="Hero" />
         )}
         <motion.div 
-          initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 bg-white/10 backdrop-blur-2xl p-12 md:p-24 rounded-[4rem] border-4 border-brand-dark text-center max-w-5xl shadow-2xl"
+          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 bg-white/20 backdrop-blur-xl p-10 md:p-24 rounded-[3rem] border-6 border-brand-dark text-center max-w-6xl shadow-2xl"
         >
-          <h1 className="text-6xl md:text-[10rem] font-bold tracking-tighter leading-[0.85] mb-12 uppercase italic">{data?.mainHeading || 'The Narrative Anchor'}</h1>
-          <button className="bg-brand-primary text-white border-2 border-brand-dark px-16 py-6 rounded-full text-2xl font-bold hover:shadow-[10px_10px_0px_0px_rgba(28,36,45,1)] transition-all">Get Started</button>
+          <h1 className="text-6xl md:text-[11rem] font-bold tracking-tighter leading-[0.8] mb-12 uppercase italic">{data?.mainHeading || 'The Narrative Anchor'}</h1>
+          <button className="bg-brand-primary text-white border-4 border-brand-dark px-16 py-6 rounded-full text-3xl font-bold hover:shadow-[10px_10px_0px_0px_rgba(28,36,45,1)] transition-all">Explore Work</button>
         </motion.div>
       </section>
 
-      {/* NARRATIVE "HEY" SECTION */}
-      <section className="py-32 px-6 md:px-24 grid md:grid-cols-2 gap-20 items-start">
-        <h2 className="text-7xl md:text-[11rem] font-bold leading-[0.8] tracking-tighter sticky top-24">
+      {/* NARRATIVE SECTION */}
+      <section className="py-40 px-6 md:px-24 grid md:grid-cols-2 gap-24">
+        <h2 className="text-7xl md:text-[12rem] font-bold leading-[0.75] tracking-tighter sticky top-32">
           Hey, <br />
           <AnimatePresence mode="wait">
-            <motion.span key={rotatorIndex} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="font-accent text-brand-secondary inline-block -rotate-2">
-              {identities[rotatorIndex]}
+            <motion.span key={rotatorIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="font-accent text-brand-secondary italic px-4">
+              {data?.identities?.[rotatorIndex] || "Partner"}
             </motion.span>
           </AnimatePresence>!
         </h2>
-        <div className="flex flex-col gap-12 justify-center h-full pt-10">
-          <p className="text-3xl md:text-5xl font-medium text-brand-body leading-tight">
-            {data?.philosophy || "I help you anchor complex ideas into narratives that move people and markets."}
+        <div className="flex flex-col gap-10 justify-center">
+          <p className="text-3xl md:text-5xl font-medium text-brand-body leading-[1.1]">
+            {data?.philosophy || "I build high-legibility strategic narratives for the global context."}
           </p>
-          <div className="w-32 h-3 bg-brand-primary rounded-full"></div>
+          <div className="w-40 h-4 bg-brand-primary border-2 border-brand-dark"></div>
         </div>
       </section>
 
       {/* BENTO SERVICES */}
-      <section className="py-32 px-6 md:px-24 border-y-4 border-brand-dark">
+      <section className="py-32 px-6 md:px-24 border-y-8 border-brand-dark bg-brand-pink/20">
         <div className="flex flex-col items-center mb-24">
-          <h3 className="text-6xl font-bold mb-12 italic uppercase tracking-tighter">Strategic Services</h3>
-          <div className="bg-brand-dark p-2 rounded-full flex gap-2">
+          <h3 className="text-6xl md:text-8xl font-bold mb-12 italic uppercase tracking-tighter">Capabilities</h3>
+          <div className="bg-brand-dark p-3 rounded-full flex gap-3 shadow-xl">
             {['Organization', 'Business', 'Individual'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-10 py-4 rounded-full font-bold uppercase text-sm tracking-widest transition-all ${activeTab === tab ? 'bg-brand-primary text-white' : 'text-white/50 hover:text-white'}`}>
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-12 py-5 rounded-full font-bold uppercase text-sm tracking-[0.2em] transition-all ${activeTab === tab ? 'bg-brand-primary text-white shadow-lg' : 'text-white/40 hover:text-white'}`}>
                 {tab}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {filteredServices.map((service: any) => (
-            <div key={service.title} className="bg-white border-4 border-brand-dark p-12 rounded-[3.5rem] shadow-[12px_12px_0px_0px_rgba(28,36,45,1)]">
-              <h4 className="text-5xl font-bold mb-10 tracking-tighter">{service.title}</h4>
-              <div className="space-y-6">
+            <div key={service.title} className="bg-white border-6 border-brand-dark p-14 rounded-[4rem] shadow-[18px_18px_0px_0px_rgba(28,36,45,1)]">
+              <h4 className="text-5xl md:text-6xl font-bold mb-12 tracking-tighter italic">{service.title}</h4>
+              <div className="space-y-8">
                 {service.accordions?.map((acc: any) => (
-                  <div key={acc.label} className="border-b-4 border-brand-dark/5">
-                    <button 
-                      onClick={() => setOpenAccordion(openAccordion === acc.label ? null : acc.label)}
-                      className="w-full flex justify-between items-center py-6 text-left font-bold text-2xl hover:text-brand-primary transition-colors"
-                    >
-                      {acc.label}
-                      {openAccordion === acc.label ? <ChevronUp size={32} /> : <ChevronDown size={32} />}
+                  <div key={acc.label} className="border-b-4 border-brand-dark/10">
+                    <button onClick={() => setOpenAccordion(openAccordion === acc.label ? null : acc.label)} className="w-full flex justify-between items-center py-8 text-left font-bold text-3xl hover:text-brand-primary transition-all">
+                      {acc.label} {openAccordion === acc.label ? <ChevronUp size={40} /> : <ChevronDown size={40} />}
                     </button>
                     <AnimatePresence>
                       {openAccordion === acc.label && (
                         <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
-                          <p className="pb-8 text-2xl text-brand-body leading-relaxed">{acc.content}</p>
+                          <p className="pb-12 text-2xl text-brand-body font-medium leading-relaxed">{acc.content}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -108,22 +104,18 @@ const Home = () => {
         </div>
       </section>
 
-      {/* COMPARISON SECTION */}
-      <section className="py-32 px-6 md:px-24 grid md:grid-cols-2 gap-10">
-        <div className="bg-brand-secondary text-white border-4 border-brand-dark p-16 rounded-[4rem] shadow-[15px_15px_0px_0px_rgba(28,36,45,1)] hover:-rotate-1 transition-transform">
-          <h3 className="text-6xl font-bold mb-8 italic tracking-tighter">The Specialist</h3>
-          <p className="text-2xl mb-12 opacity-90 font-medium leading-relaxed">Direct strategy, 9 years of global empathy, and high-legibility narratives.</p>
-          <Link to="/about" className="inline-flex items-center gap-4 font-bold text-3xl border-b-8 border-white hover:pb-4 transition-all uppercase italic">Meet Ayesha <ArrowRight size={32} /></Link>
+      {/* COMPARISON */}
+      <section className="py-40 px-6 md:px-24 grid md:grid-cols-2 gap-12 bg-brand-dark text-brand-bg">
+        <div className="bg-brand-primary border-4 border-white p-16 rounded-[4rem] shadow-neo">
+          <h3 className="text-6xl font-bold mb-10 italic uppercase tracking-tighter">The Specialist</h3>
+          <p className="text-3xl mb-12 font-medium leading-tight text-white">Direct empathy. 9 years of global strategy. Zero agency layers.</p>
+          <Link to="/about" className="inline-flex items-center gap-4 text-4xl border-b-8 border-white pb-2 font-bold uppercase italic">About Me <ArrowRight size={48} /></Link>
         </div>
-        <div className="bg-brand-pink border-4 border-brand-dark p-16 rounded-[4rem] flex flex-col justify-center shadow-[15px_15px_0px_0px_rgba(28,36,45,1)]">
-          <h3 className="text-6xl font-bold mb-8 tracking-tighter">Large Agency</h3>
-          <p className="text-2xl text-brand-body leading-relaxed">Corporate layers, generic templates, and high overhead that dilutes your story.</p>
+        <div className="bg-white/5 border-4 border-white/10 p-16 rounded-[4rem] opacity-40">
+          <h3 className="text-6xl font-bold mb-10 uppercase tracking-tighter">The Agency</h3>
+          <p className="text-3xl font-medium leading-tight">Middle management, generic templates, and high overhead.</p>
         </div>
       </section>
-
-      <footer className="py-16 text-center border-t-4 border-brand-dark opacity-40 font-bold uppercase tracking-[0.3em] text-sm">
-        © 2026 Story Board | Built for the Narrative
-      </footer>
     </div>
   );
 };
