@@ -4,21 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        'brand-bg': '#fff9f5',
-        'brand-dark': '#1C242D',
-        'brand-primary': '#F15425',
-        'brand-secondary': '#7079DD',
-        'brand-body': '#696969',
-        'brand-pink': '#FFD3E2',
-        'brand-teal': '#1B4A48',
+        'q-black': '#1C242D',
+        'q-white': '#FFFFFF',
+        'q-red': '#F04438',   // Qatchup Primary Red
+        'q-blue': '#0BA5EC',  // Qatchup Secondary Blue
+        'q-yellow': '#F79009', // Qatchup Tertiary Yellow
       },
       fontFamily: {
         sans: ['"Space Grotesk"', 'sans-serif'],
         accent: ['"Caveat"', 'cursive'],
       },
-      borderWidth: {
-        '6': '6px',
-      }
     },
   },
   plugins: [],
