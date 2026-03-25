@@ -5,8 +5,11 @@ export default defineConfig({
   name: 'default',
   title: 'Story Board CMS',
 
-  projectId: 'm4hjnbjr', // Your ID from the screenshot
+  projectId: 'm4hjnbjr', 
   dataset: 'production',
+  
+  // This is the "Magic Key" you were missing!
+  basePath: '/admin', 
 
   plugins: [deskTool()],
 
