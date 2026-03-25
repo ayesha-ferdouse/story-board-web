@@ -7,29 +7,22 @@ export default defineConfig({
   projectId: '5g6auq7p', 
   dataset: 'production',
   basePath: '/admin', 
-
   plugins: [deskTool()],
-
   schema: {
     types: [
       {
         name: 'storyBoard',
         type: 'document',
-        title: 'Home Page Content',
+        title: 'Home Page',
         fields: [
           { name: 'heroImage', type: 'image', title: 'Hero Background', options: { hotspot: true }},
-          { name: 'mainHeading', type: 'string', title: 'Hero Card Title', initialValue: 'The Narrative Anchor' },
+          { name: 'mainHeading', type: 'string', title: 'Hero Card Title' },
           { name: 'philosophy', type: 'text', title: 'Philosophy Text' },
-          {
-            name: 'identities',
-            type: 'array',
-            title: 'Rotating Identities',
-            of: [{ type: 'string' }]
-          },
+          { name: 'identities', type: 'array', title: 'Rotating Identities', of: [{ type: 'string' }] },
           {
             name: 'services',
             type: 'array',
-            title: 'Bento Services',
+            title: 'Services',
             of: [{
               type: 'object',
               fields: [
@@ -38,12 +31,11 @@ export default defineConfig({
                 { 
                   name: 'accordions', 
                   type: 'array', 
-                  title: 'Service Accordion List',
                   of: [{
                     type: 'object',
                     fields: [
-                      { name: 'label', type: 'string', title: 'Label' },
-                      { name: 'content', type: 'text', title: 'Detailed Content' }
+                      { name: 'label', type: 'string' },
+                      { name: 'content', type: 'text' }
                     ]
                   }]
                 }
